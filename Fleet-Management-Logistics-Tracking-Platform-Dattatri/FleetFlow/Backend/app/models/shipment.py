@@ -1,0 +1,25 @@
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+from datetime import datetime
+from app.database import Base
+
+
+class Shipment(Base):
+    __tablename__ = "shipments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    origin = Column(String, nullable=False)
+    destination = Column(String, nullable=False)
+    weight_kg = Column(Float, nullable=False)
+    origin_lat = Column(Float, nullable=True)
+    origin_lng = Column(Float, nullable=True)
+    destination_lat = Column(Float, nullable=True)
+    destination_lng = Column(Float, nullable=True)
+    status = Column(String, default="pending", index=True)  # pending, in_transit, delivered, cancelled
+    driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=True, index=True)
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    delivered_at = Column(DateTime, nullable=True)
+
+    driver = relationship("Driver", back_populates="shipments")
+    vehicle = relationship("Vehicle", back_populates="shipments")
